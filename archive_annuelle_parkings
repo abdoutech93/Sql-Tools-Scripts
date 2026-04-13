@@ -1,0 +1,11 @@
+CREATE EVENT archive_annuelle_parkings
+ON SCHEDULE EVERY 1 MONTH
+STARTS '2026-03-01 02:00:00'
+DO
+  BEGIN
+    CREATE TABLE IF NOT EXISTS parkingaccesslog_archive LIKE parkingaccesslog;
+    INSERT INTO parkingaccesslog_archive
+    SELECT * FROM parkingaccesslog WHERE (time < NOW() - INTERVAL 6 MONTH) and quit=1;
+    
+    DELETE FROM parkingaccesslog WHERE (time < NOW() - INTERVAL 6 MONTH) and quit=1;
+  END; 
